@@ -1,5 +1,5 @@
 [tools]
-go = "1.22"
+go = "1.26"
 "go:github.com/tc-hib/go-winres" = "latest"
 
 [tasks.test]

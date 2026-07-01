@@ -1,6 +1,6 @@
 module github.com/t7b/localntpd
 
-go 1.22
+go 1.26
 
 require github.com/kardianos/service v1.2.2
 
