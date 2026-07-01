@@ -19,6 +19,23 @@ service.
 go build -o localntpd .
 ```
 
+### Windows build (with icon and version info)
+
+To embed an icon and version metadata into the `.exe`, generate the Windows
+resource with [`go-winres`](https://github.com/tc-hib/go-winres) before building.
+`go build` links the generated `rsrc_windows_*.syso` automatically.
+
+```bash
+go install github.com/tc-hib/go-winres@latest   # first time only
+go-winres make --arch amd64,arm64                # generate .syso from winres/
+GOOS=windows GOARCH=amd64 go build -o localntpd.exe .
+```
+
+The resource definition lives in `winres/winres.json` and the icons in
+`winres/icon.png` / `icon16.png`. Replace them and re-run `go-winres make` to
+customize. The `.syso` files are only linked on Windows builds, so they do not
+affect macOS/Linux builds.
+
 ## Usage
 
 ```bash

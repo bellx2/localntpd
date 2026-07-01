@@ -22,6 +22,20 @@ go run . run -addr :12345        # 非特権ポートでフォアグラウンド
 
 ポート123は特権ポートのため、`install` およびデフォルトの `:123` での起動には管理者/root権限が必要。開発・テスト時は `-addr :12345` など非特権ポートを使う。
 
+### Windowsビルド (アイコン/バージョン情報付き)
+
+`.exe` にアイコンとバージョン情報を埋め込むには、ビルド前に `go-winres` でリソースを生成する。生成された `rsrc_windows_*.syso` を `go build` が自動リンクする。
+
+```bash
+go install github.com/tc-hib/go-winres@latest   # 初回のみ
+go-winres make --arch amd64,arm64               # winres/ から .syso を生成
+GOOS=windows GOARCH=amd64 go build -o localntpd.exe .
+```
+
+- リソース定義は `winres/winres.json`、アイコンは `winres/icon.png` / `icon16.png`。アイコンを差し替えたら `go-winres make` を再実行する。
+- `*.syso` は生成物のため `.gitignore` 済み。`winres/` 一式のみコミットする。
+- `.syso` はファイル名のビルド制約により **Windowsビルド時のみ** リンクされ、macOS/Linuxビルドには影響しない。
+
 ## アーキテクチャ
 
 2層構成。サービスライフサイクルとNTPプロトコル実装を分離している。

@@ -1,2 +1,5 @@
 /localntpd
 /localntpd.exe
+
+# go-winres が生成するWindowsリソース (winres/ から再生成)
+*.syso
