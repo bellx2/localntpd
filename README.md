@@ -1,0 +1,64 @@
+# localntpd
+
+[日本語版はこちら / Japanese version](README_ja.md)
+
+A simple NTP server that serves your local PC's clock. Written in Go, it runs on
+multiple platforms (Windows / macOS / Linux) and can be registered as a system
+service.
+
+## Features
+
+- Serves the local machine's time over the NTP protocol (UDP)
+- Cross-platform single binary (Windows / macOS / Linux)
+- Installable as an OS system service (via [kardianos/service](https://github.com/kardianos/service))
+- No upstream synchronization — acts as a standalone local clock (stratum, reference ID `LOCL`)
+
+## Build
+
+```bash
+go build -o localntpd .
+```
+
+## Usage
+
+```bash
+localntpd [command] [options]
+```
+
+### Commands
+
+| Command     | Description                          |
+|-------------|--------------------------------------|
+| `run`       | Run in the foreground (default)      |
+| `install`   | Register as a system service         |
+| `uninstall` | Remove the service                   |
+| `start`     | Start the service                    |
+| `stop`      | Stop the service                     |
+| `restart`   | Restart the service                  |
+| `status`    | Show the service status              |
+| `help`      | Show help                            |
+
+### Options
+
+| Option           | Default | Description                          |
+|------------------|---------|--------------------------------------|
+| `-addr string`   | `:123`  | Listen address (e.g. `:123`, `0.0.0.0:123`) |
+| `-stratum uint`  | `2`     | Stratum (1–15)                       |
+
+### Examples
+
+```bash
+localntpd run -addr :12345    # Run on a non-privileged port
+localntpd install             # Register as a service (requires administrator/root)
+localntpd start
+```
+
+## Notes
+
+- Binding to port 123 (the standard NTP port) requires administrator/root
+  privileges. This applies to `install` and to running with the default `:123`.
+- For development and testing, use a non-privileged port such as `-addr :12345`.
+
+## License
+
+See the repository for license information.
