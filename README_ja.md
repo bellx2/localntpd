@@ -25,15 +25,14 @@ go build -o localntpd .
 生成された `rsrc_windows_*.syso` は `go build` が自動でリンクします。
 
 ```bash
-go install github.com/tc-hib/go-winres@v0.3.3   # 初回のみ
-go-winres make --arch amd64,arm64                # winres/ から .syso を生成
+go run github.com/tc-hib/go-winres@v0.3.3 make --arch amd64,arm64
 GOOS=windows GOARCH=amd64 go build -o localntpd.exe .
 ```
 
 Go 1.26以上が必要です。リソース定義は `winres/winres.json`、アイコンは
 `winres/icon16.png` / `icon32.png` / `icon48.png` / `icon256.png`
-（元データ: `winres/icon.svg`）です。差し替えて `go-winres make` を再実行すれば
-カスタマイズできます。`.syso` はWindowsビルド時のみリンクされるため、
+（元データ: `winres/icon.svg`）です。差し替えて上記の `go run ... make` を
+再実行すればカスタマイズできます。`.syso` はWindowsビルド時のみリンクされるため、
 macOS/Linuxビルドには影響しません。
 
 ## 使い方

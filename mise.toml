@@ -1,6 +1,5 @@
 [tools]
 go = "1.26.5"
-"go:github.com/tc-hib/go-winres" = "v0.3.3"
 
 [tasks.test]
 description = "ユニットテストを実行"
@@ -8,7 +7,7 @@ run = "go test ./..."
 
 [tasks.winres]
 description = "Windowsリソース (.syso) を生成"
-run = "go-winres make --arch amd64,arm64"
+run = "go run github.com/tc-hib/go-winres@v0.3.3 make --arch amd64,arm64"
 
 [tasks.build]
 description = "ローカル向けビルド"

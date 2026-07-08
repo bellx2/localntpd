@@ -26,16 +26,15 @@ resource with [`go-winres`](https://github.com/tc-hib/go-winres) before building
 `go build` links the generated `rsrc_windows_*.syso` automatically.
 
 ```bash
-go install github.com/tc-hib/go-winres@v0.3.3   # first time only
-go-winres make --arch amd64,arm64                # generate .syso from winres/
+go run github.com/tc-hib/go-winres@v0.3.3 make --arch amd64,arm64
 GOOS=windows GOARCH=amd64 go build -o localntpd.exe .
 ```
 
 Requires Go 1.26+. The resource definition lives in `winres/winres.json` and
 the icons in `winres/icon16.png` / `icon32.png` / `icon48.png` / `icon256.png`
-(source: `winres/icon.svg`). Replace them and re-run `go-winres make` to
-customize. The `.syso` files are only linked on Windows builds, so they do not
-affect macOS/Linux builds.
+(source: `winres/icon.svg`). Replace them and re-run the `go run ... make`
+command above to customize. The `.syso` files are only linked on Windows
+builds, so they do not affect macOS/Linux builds.
 
 ## Usage
 

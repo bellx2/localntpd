@@ -27,13 +27,12 @@ go run . run -addr :12345        # 非特権ポートでフォアグラウンド
 `.exe` にアイコンとバージョン情報を埋め込むには、ビルド前に `go-winres` でリソースを生成する。生成された `rsrc_windows_*.syso` を `go build` が自動リンクする。
 
 ```bash
-go install github.com/tc-hib/go-winres@v0.3.3   # 初回のみ
-go-winres make --arch amd64,arm64               # winres/ から .syso を生成
+go run github.com/tc-hib/go-winres@v0.3.3 make --arch amd64,arm64
 GOOS=windows GOARCH=amd64 go build -o localntpd.exe .
 ```
 
-- Go 1.26以上が必要。
-- リソース定義は `winres/winres.json`、アイコンは `icon16/32/48/256.png`（元データ: `icon.svg`）。差し替えたら `go-winres make` を再実行する。
+- Go 1.26以上が必要。`go-winres` の事前インストールは不要（`go run` で実行）。
+- リソース定義は `winres/winres.json`、アイコンは `icon16/32/48/256.png`（元データ: `icon.svg`）。差し替えたら上記の `go run ... make` を再実行する。
 - `*.syso` は生成物のため `.gitignore` 済み。`winres/` 一式のみコミットする。
 - `.syso` はファイル名のビルド制約により **Windowsビルド時のみ** リンクされ、macOS/Linuxビルドには影響しない。
 
