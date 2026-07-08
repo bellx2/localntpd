@@ -27,12 +27,13 @@ go run . run -addr :12345        # 非特権ポートでフォアグラウンド
 `.exe` にアイコンとバージョン情報を埋め込むには、ビルド前に `go-winres` でリソースを生成する。生成された `rsrc_windows_*.syso` を `go build` が自動リンクする。
 
 ```bash
-go install github.com/tc-hib/go-winres@latest   # 初回のみ
+go install github.com/tc-hib/go-winres@v0.3.3   # 初回のみ
 go-winres make --arch amd64,arm64               # winres/ から .syso を生成
 GOOS=windows GOARCH=amd64 go build -o localntpd.exe .
 ```
 
-- リソース定義は `winres/winres.json`、アイコンは `winres/icon.png` / `icon16.png`。アイコンを差し替えたら `go-winres make` を再実行する。
+- Go 1.26以上が必要。
+- リソース定義は `winres/winres.json`、アイコンは `icon16/32/48/256.png`（元データ: `icon.svg`）。差し替えたら `go-winres make` を再実行する。
 - `*.syso` は生成物のため `.gitignore` 済み。`winres/` 一式のみコミットする。
 - `.syso` はファイル名のビルド制約により **Windowsビルド時のみ** リンクされ、macOS/Linuxビルドには影響しない。
 
@@ -40,7 +41,7 @@ GOOS=windows GOARCH=amd64 go build -o localntpd.exe .
 
 2層構成。サービスライフサイクルとNTPプロトコル実装を分離している。
 
-- `main.go` — CLIエントリポイントとサービス管理。`github.com/kardianos/service` でOS横断のサービス登録を行う。`os.Args[1]` を見て `install`/`start` 等のサービス制御コマンドと通常起動を振り分ける。サービスの `Start`/`Stop` は `context.CancelFunc` でサーバーgoroutineの停止を制御する（ブロックしない設計）。
+- `main.go` — CLIエントリポイントとサービス管理。`github.com/kardianos/service` でOS横断のサービス登録を行う。`os.Args[1]` を見て `install`/`start` 等のサービス制御コマンドと通常起動を振り分ける。`install` 時の `-addr`/`-stratum` はサービス起動引数として保存する。`Start` はサーバーgoroutineを起動し、`Stop` は `context` キャンセル後に終了を待つ。
 - `internal/ntp/server.go` — NTPプロトコルの中核。`Server.Run(ctx)` がUDP 48バイトパケットを受信し、`buildResponse` で応答を組み立てる。`ctx` のキャンセルを検知するため `SetReadDeadline` で1秒ごとにループを回している（ブロッキングReadを避ける）。stratum=2 / refID=`LOCL` の固定応答で、上位NTPサーバーとは同期しないローカルクロック専用サーバー。
 
 ## NTPパケット実装の注意点

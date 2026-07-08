@@ -25,15 +25,16 @@ go build -o localntpd .
 生成された `rsrc_windows_*.syso` は `go build` が自動でリンクします。
 
 ```bash
-go install github.com/tc-hib/go-winres@latest   # 初回のみ
+go install github.com/tc-hib/go-winres@v0.3.3   # 初回のみ
 go-winres make --arch amd64,arm64                # winres/ から .syso を生成
 GOOS=windows GOARCH=amd64 go build -o localntpd.exe .
 ```
 
-リソース定義は `winres/winres.json`、アイコンは `winres/icon.png` /
-`icon16.png` にあります。差し替えて `go-winres make` を再実行すればカスタマイズ
-できます。`.syso` はWindowsビルド時のみリンクされるため、macOS/Linuxビルドには
-影響しません。
+Go 1.26以上が必要です。リソース定義は `winres/winres.json`、アイコンは
+`winres/icon16.png` / `icon32.png` / `icon48.png` / `icon256.png`
+（元データ: `winres/icon.svg`）です。差し替えて `go-winres make` を再実行すれば
+カスタマイズできます。`.syso` はWindowsビルド時のみリンクされるため、
+macOS/Linuxビルドには影響しません。
 
 ## 使い方
 
@@ -64,8 +65,9 @@ localntpd [コマンド] [オプション]
 ### 例
 
 ```bash
-localntpd run -addr :12345    # 非特権ポートで起動
-localntpd install             # サービス登録 (管理者権限が必要)
+localntpd run -addr :12345              # 非特権ポートで起動
+localntpd install                       # サービス登録 (管理者権限が必要)
+localntpd install -addr :12345          # カスタムアドレスでサービス登録
 localntpd start
 ```
 
@@ -74,6 +76,7 @@ localntpd start
 - ポート123 (標準NTPポート) を使用するには管理者/root権限が必要です。`install` や
   デフォルトの `:123` での起動が該当します。
 - 開発・テスト時は `-addr :12345` など非特権ポートを使用してください。
+- `install` に渡したオプション (`-addr`, `-stratum`) はサービス起動引数として保存されます。
 
 ## ライセンス
 

@@ -1,6 +1,8 @@
-module github.com/t7b/localntpd
+module github.com/bellx2/localntpd
 
-go 1.26
+go 1.26.0
+
+toolchain go1.26.5
 
 require github.com/kardianos/service v1.2.2
 
