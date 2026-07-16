@@ -19,6 +19,23 @@ service.
 go build -o localntpd .
 ```
 
+### Windows build (with icon and version info)
+
+To embed an icon and version metadata into the `.exe`, generate the Windows
+resource with [`go-winres`](https://github.com/tc-hib/go-winres) before building.
+`go build` links the generated `rsrc_windows_*.syso` automatically.
+
+```bash
+go run github.com/tc-hib/go-winres@v0.3.3 make --arch amd64,arm64
+GOOS=windows GOARCH=amd64 go build -o localntpd.exe .
+```
+
+Requires Go 1.26+. The resource definition lives in `winres/winres.json` and
+the icons in `winres/icon16.png` / `icon32.png` / `icon48.png` / `icon256.png`
+(source: `winres/icon.svg`). Replace them and re-run the `go run ... make`
+command above to customize. The `.syso` files are only linked on Windows
+builds, so they do not affect macOS/Linux builds.
+
 ## Usage
 
 ```bash
@@ -48,8 +65,9 @@ localntpd [command] [options]
 ### Examples
 
 ```bash
-localntpd run -addr :12345    # Run on a non-privileged port
-localntpd install             # Register as a service (requires administrator/root)
+localntpd run -addr :12345              # Run on a non-privileged port
+localntpd install                       # Register as a service (requires administrator/root)
+localntpd install -addr :12345          # Register with a custom listen address
 localntpd start
 ```
 
@@ -58,6 +76,8 @@ localntpd start
 - Binding to port 123 (the standard NTP port) requires administrator/root
   privileges. This applies to `install` and to running with the default `:123`.
 - For development and testing, use a non-privileged port such as `-addr :12345`.
+- Options passed to `install` (`-addr`, `-stratum`) are stored as service
+  startup arguments.
 
 ## License
 

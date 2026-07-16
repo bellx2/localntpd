@@ -1,0 +1,33 @@
+[tools]
+go = "1.26.5"
+
+[tasks.test]
+description = "ユニットテストを実行"
+run = "go test ./..."
+
+[tasks.winres]
+description = "Windowsリソース (.syso) を生成"
+run = "go run github.com/tc-hib/go-winres@v0.3.3 make --arch amd64,arm64"
+
+[tasks.build]
+description = "ローカル向けビルド"
+run = "go build -o localntpd ."
+
+[tasks."build:windows"]
+description = "Windows向けビルド (アイコン・バージョン情報付き)"
+depends = ["winres"]
+run = "GOOS=windows GOARCH=amd64 go build -o localntpd.exe ."
+
+[tasks."build:windows-arm64"]
+description = "Windows ARM64向けビルド"
+depends = ["winres"]
+run = "GOOS=windows GOARCH=arm64 go build -o localntpd-arm64.exe ."
+
+[tasks.icons]
+description = "SVGから各サイズのPNGアイコンを生成 (macOS: brew install librsvg)"
+dir = "winres"
+run = '''
+for size in 16 32 48 256; do
+  rsvg-convert -w "$size" -h "$size" icon.svg -o "icon${size}.png"
+done
+'''
